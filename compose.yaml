@@ -1,0 +1,56 @@
+﻿services:
+  playwright.training.api:
+    container_name: playwright.training.api
+    build:
+      context: .
+      dockerfile: Playwright.Training.Api/Dockerfile
+    ports:
+      - '8081:8080'
+    environment:
+      CONNECTIONSTRINGS__TRAININGDATABASE: Server=postgres:5432;Database=playwright;User Id=postgres;Password=mysecretpassword;
+      KEYCLOAK__VALIDISSUER: http://localhost:8180/realms/playwright
+      KEYCLOAK__AUTHORITY: http://keycloak:8080/realms/playwright
+      KEYCLOAK__AUDIENCE: account
+
+  postgres:    
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_volume:/var/lib/postgresql
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    ports:
+      - '8180:8080'
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: mysecretpassword      
+      KC_HOSTNAME: http://localhost:8180
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_PROXY: edge
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: keycloak
+      KEYCLOAK_ADMIN_PASSWORD: mysecretpassword
+      KEYCLOAK_IMPORT: /opt/keycloak/data/import/*
+    volumes:
+      - ./compose-config/:/opt/keycloak/data/import
+    command: start-dev --import-realm
+    depends_on:
+      - postgres
+
+volumes:
+  db_volume:
+    driver: local

@@ -1,0 +1,6 @@
+@Playwright.Training.Api_HostAddress = http://localhost:5197
+
+POST {{Playwright.Training.Api_HostAddress}}/api/v1/users/
+Accept: application/json
+
+###

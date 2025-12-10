@@ -1,0 +1,234 @@
+{
+	"info": {
+		"_postman_id": "b66f163e-80fe-40da-90b4-fd47d7dec9de",
+		"name": "[Playwright Training]",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19232008"
+	},
+	"item": [
+		{
+			"name": "Create New User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"daniel.klokov-1\",\n  \"email\": \"daniel.klokov+1@playwright.test\",\n  \"firstName\": \"Daniel\",\n  \"lastName\": \"Klokov\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{playwright_training_api_url}}/api/v1/users",
+					"host": [
+						"{{playwright_training_api_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{playwright_training_api_url}}/api/v1/users/:userId",
+					"host": [
+						"{{playwright_training_api_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "a6f47e96-2d14-4245-bb34-940314dce0c9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User By Id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{playwright_training_api_url}}/api/v1/users/:userId",
+					"host": [
+						"{{playwright_training_api_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "a6f47e96-2d14-4245-bb34-940314dce0c9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch User With Id",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json-patch+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"op\": \"replace\",\n        \"path\": \"/firstName\",\n        \"value\": \"Dan\"\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{playwright_training_api_url}}/api/v1/users/:userId",
+					"host": [
+						"{{playwright_training_api_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						":userId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "a6f47e96-2d14-4245-bb34-940314dce0c9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{playwright_training_api_url}}/api/v1/users",
+					"host": [
+						"{{playwright_training_api_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "accessTokenUrl",
+				"value": "{{keycloak_url}}/realms/playwright/protocol/openid-connect/token",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "{{keycloak_url}}/realms/playwright/protocol/openid-connect/auth",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "playwright",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "playwright-client",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "https://oauth.pstmn.io/v1/browser-callback",
+				"type": "string"
+			},
+			{
+				"key": "useBrowser",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code_with_pkce",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "Playwright client token",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "playwright_training_api_url",
+			"value": ""
+		},
+		{
+			"key": "keycloak_url",
+			"value": ""
+		}
+	]
+}
