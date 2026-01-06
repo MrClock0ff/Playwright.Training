@@ -1,23 +1,29 @@
 ﻿services:
   playwright.training.api:
     container_name: playwright.training.api
+    # Builds image from source code and creates container.
     build:
       context: .
       dockerfile: Playwright.Training.Api/Dockerfile
     ports:
+      # Port mapping: outside container localhost:8081, inside container playwright.training.api:8080.
       - '8081:8080'
     environment:
       CONNECTIONSTRINGS__TRAININGDATABASE: Server=postgres:5432;Database=playwright;User Id=postgres;Password=mysecretpassword;
+      # ValidIssuer is set as outside container because we will use Keycloak outside the container to generate access tokens (using Postman).
       KEYCLOAK__VALIDISSUER: http://localhost:8180/realms/playwright
+      # Authority is set as internal container because service will validate access token internally with Keycloak (both service and Keycloak set inside container).
       KEYCLOAK__AUTHORITY: http://keycloak:8080/realms/playwright
       KEYCLOAK__AUDIENCE: account
 
   postgres:    
     image: postgres:latest
     container_name: postgres
+    # Port mapping: outside container localhost:5432, inside container postgres:5432.
     ports:
       - '5432:5432'
     volumes:
+      # For persisting database data.
       - db_volume:/var/lib/postgresql
     environment:
       POSTGRES_DB: postgres
@@ -28,25 +34,32 @@
     image: quay.io/keycloak/keycloak:latest
     container_name: keycloak
     ports:
+      # Port mapping: outside container localhost:8180, inside container keycloak:8080.
       - '8180:8080'
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/postgres
       KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: mysecretpassword      
+      KC_DB_PASSWORD: mysecretpassword
+      # Set to outside of container host so the Keycloak UI can be accessed externally on localhost:8180.
       KC_HOSTNAME: http://localhost:8180
+      # Backchannel is used for inter container communication so Keycloak can be accessed on keycloak:8080.
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
+      # Required for backchannel to work.
       KC_PROXY: edge
       KC_LOG_LEVEL: info
       KC_METRICS_ENABLED: true
       KC_HEALTH_ENABLED: true
       KEYCLOAK_ADMIN: keycloak
       KEYCLOAK_ADMIN_PASSWORD: mysecretpassword
+      # Indicates the path where exported realm data is store inside the container.
       KEYCLOAK_IMPORT: /opt/keycloak/data/import/*
     volumes:
+      # Maps compose local folder to container internal folder to enable access to exported realms.
       - ./compose-config/:/opt/keycloak/data/import
+    # Starts Keycloak in developer mode including realm imports.
     command: start-dev --import-realm
     depends_on:
       - postgres
