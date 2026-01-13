@@ -32,4 +32,87 @@ test.describe('Endpoint validation tests.', () => {
 
         expect(response.status()).toBe(404);
     });
+
+    test('Create user should return bad request response for a malformed username', async ({request}) => {
+        const response = await apiContext.post(UsersApi.endpoints.createUser, {
+            data: {
+                username: 'test with space',
+                firstName: 'test',
+                lastName: 'test',
+                email: 'test@test.test',
+            }
+        });
+
+        expect(response.status()).toBe(400);
+        expect((await response.json()).title).toBe('Validation failed: \n -- Username: \'Username\' is not in the correct format. Severity: Error');
+        expect((await response.json()).detail).toBe('Validation failed: \n -- Username: \'Username\' is not in the correct format. Severity: Error');
+    });
+
+    test('Create user should return bad request response for a malformed email', async ({request}) => {
+        const response = await apiContext.post(UsersApi.endpoints.createUser, {
+            data: {
+                username: 'test',
+                firstName: 'test',
+                lastName: 'test',
+                email: 'test-test.test',
+            }
+        });
+
+        expect(response.status()).toBe(400);
+        expect((await response.json()).title).toBe('Validation failed: \n -- Email: \'Email\' is not a valid email address. Severity: Error');
+        expect((await response.json()).detail).toBe('Validation failed: \n -- Email: \'Email\' is not a valid email address. Severity: Error');
+    });
+
+    test('Create user should return bad response for malformed first name', async ({request}) => {
+        const response = await apiContext.post(UsersApi.endpoints.createUser, {
+            data: {
+                username: 'test',
+                firstName: 'test-123',
+                lastName: 'test',
+                email: 'test@test.test'
+            }
+        });
+
+        expect(response.status()).toBe(400);
+        expect((await response.json()).title).toBe('Validation failed: \n -- FirstName: \'First Name\' is not in the correct format. Severity: Error');
+        expect((await response.json()).detail).toBe('Validation failed: \n -- FirstName: \'First Name\' is not in the correct format. Severity: Error');
+    });
+
+    test('Create user should return bad response for malformed last name', async ({request}) => {
+        const response = await apiContext.post(UsersApi.endpoints.createUser, {
+            data: {
+                username: 'test',
+                firstName: 'test',
+                lastName: 'test-123',
+                email: 'test@test.test'
+            }
+        });
+
+        expect(response.status()).toBe(400);
+        expect((await response.json()).title).toBe('Validation failed: \n -- LastName: \'Last Name\' is not in the correct format. Severity: Error');
+        expect((await response.json()).detail).toBe('Validation failed: \n -- LastName: \'Last Name\' is not in the correct format. Severity: Error');
+    });
+
+    test('Create user should return bad response for missing required values', async ({request}) => {
+        const response = await apiContext.post(UsersApi.endpoints.createUser, {
+            data: {
+            }
+        });
+
+        expect(response.status()).toBe(400);
+        expect((await response.json()).errors).toEqual(expect.objectContaining({
+            Username: [
+                'The Username field is required.'
+            ],
+            Email: [
+                'The Email field is required.'
+            ],
+            LastName: [
+                'The LastName field is required.'
+            ],
+            FirstName: [
+                'The FirstName field is required.'
+            ]
+        }));
+    });
 });
