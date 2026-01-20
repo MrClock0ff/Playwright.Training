@@ -10,7 +10,7 @@ test.describe('Endpoint protection tests', () => {
             baseURL: UsersApi.baseUrl,
             extraHTTPHeaders: {
                 Accept: 'application/json',
-                Authorization: undefined
+                Authorization: 'myAccessToken'
             }
         });
     });
