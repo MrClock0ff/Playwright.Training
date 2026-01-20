@@ -115,4 +115,15 @@ test.describe('Endpoint validation tests.', () => {
             ]
         }));
     });
+
+    test('Ensure default user exist', async () => {
+        const response = await apiContext.get(UsersApi.endpoints.getUser.replace('{id}', '5c33e35c-606e-4d8f-91ec-1eba45094043'));
+
+        expect(response.status()).toBe(200);
+        expect(await response.json()).toEqual(expect.objectContaining({
+            "email": "daniel@training.com",
+            "id": "5c33e35c-606e-4d8f-91ec-1eba45094043",
+            "username": "daniel-training",
+        }))
+    });
 });
